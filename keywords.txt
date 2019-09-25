@@ -1,0 +1,24 @@
+#######################################
+# Syntax Coloring Map For QZQSM
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+QZQSM	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+Decode	KEYWORD2
+GetReport	KEYWORD2
+SetYear	KEYWORD2
+EnableCategory	KEYWORD2
+DisableCategory	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
