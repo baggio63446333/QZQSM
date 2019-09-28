@@ -4217,14 +4217,25 @@ const char* QZQSM::dc12ic2str(int code)
 }
 
 // Typhoon Intensity
-const char* QZQSM::dc12w2str(int w)
+const char* QZQSM::dc12w2str1(int w)
 {
-  static char wstr[8];
+  static char wstr1[8];
   if (w == 0) {
     return "不明";
   } else {
-    snprintf(wstr, sizeof(wstr), "%d", w);
-    return wstr;
+    snprintf(wstr1, sizeof(wstr1), "%d", w);
+    return wstr1;
+  }
+}
+
+const char* QZQSM::dc12w2str2(int w)
+{
+  static char wstr2[8];
+  if (w == 0) {
+    return "不明";
+  } else {
+    snprintf(wstr2, sizeof(wstr2), "%d", w);
+    return wstr2;
   }
 }
 
@@ -4244,7 +4255,7 @@ void QZQSM::report_dc12()
                    dc12sr2str(_u.Dc12.Sr), dc12ic2str(_u.Dc12.Ic),
                    _u.Dc12.LatNs ? 'S' : 'N', _u.Dc12.LatD, _u.Dc12.LatM, _u.Dc12.LatS,
                    _u.Dc12.LonEw ? 'W' : 'E', _u.Dc12.LonD, _u.Dc12.LonM, _u.Dc12.LonS,
-                   _u.Dc12.Pr, dc12w2str(_u.Dc12.W1), dc12w2str(_u.Dc12.W2));
+                   _u.Dc12.Pr, dc12w2str1(_u.Dc12.W1), dc12w2str2(_u.Dc12.W2));
 }
 
 void QZQSM::decode_dc12()

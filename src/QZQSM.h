@@ -268,7 +268,8 @@ private:
   const char* dc12dt2str(int code);
   const char* dc12sr2str(int code);
   const char* dc12ic2str(int code);
-  const char* dc12w2str(int w);
+  const char* dc12w2str1(int w);
+  const char* dc12w2str2(int w);
   const char* dc14dw2str(int code);
   const char* dc14pl2str(int code);
 
