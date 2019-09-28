@@ -686,7 +686,7 @@ void QZQSM::decode_dc1()
   "\n" \
   "発表時刻：%d月%d日%d時%d分\n\n" \
   "震央地名：%s\n" \
-  "緯度・経度：%c %d度%d分%d秒 %c %d度%d分%d秒\n" \
+  "緯度・経度：%s%d度%d分%d秒 %s%d度%d分%d秒\n" \
   "深さ(km)：%s\n" \
   "マグニチュード：%s\n"
 
@@ -710,8 +710,8 @@ void QZQSM::report_dc2()
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
                    DC2_REPORT3, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi,
                    dc1ep2str(_u.Dc2.Ep),
-                   _u.Dc2.LatNs ? 'S' : 'N', _u.Dc2.LatD, _u.Dc2.LatM, _u.Dc2.LatS,
-                   _u.Dc2.LonEw ? 'W' : 'E', _u.Dc2.LonD, _u.Dc2.LonM, _u.Dc2.LonS,
+                   _u.Dc2.LatNs ? "南緯" : "北緯", _u.Dc2.LatD, _u.Dc2.LatM, _u.Dc2.LatS,
+                   _u.Dc2.LonEw ? "西経" : "東経", _u.Dc2.LonD, _u.Dc2.LonM, _u.Dc2.LonS,
                    dc1de2str(_u.Dc2.De),
                    dc1ma2str(_u.Dc2.Ma));
 }
@@ -4163,16 +4163,14 @@ void QZQSM::decode_dc11()
   "発表時刻：%d月%d日%d時%d分\n\n"
 
 #define DC12_REPORT2 \
-  "台風番号：%d\n" \
-  "基点時刻：%d日%d時%d分\n" \
-  "基点時刻分類：%s\n" \
-  "情報の基点時刻からの経過時間：%d時間後\n" \
+  "台風：%d号\n" \
+  "基点時刻：%d日%d時%d分 (%s) %d時間後\n" \
   "大きさ：%s\n" \
   "強さ：%s\n" \
-  "緯度・経度：%c %d度%d分%d秒 %c %d度%d分%d秒\n" \
-  "中心気圧：%d\n" \
-  "最大風速：%s\n" \
-  "最大瞬間風速：%s\n"
+  "緯度・経度：%s%d度%d分%d秒 %s%d度%d分%d秒\n" \
+  "中心気圧(hPa)：%d\n" \
+  "最大風速(m/s)：%s\n" \
+  "最大瞬間風速(m/s)：%s\n"
 
 // Type of Reference Time
 const char* QZQSM::dc12dt2str(int code)
@@ -4253,8 +4251,8 @@ void QZQSM::report_dc12()
                    DC12_REPORT2, _u.Dc12.Tn, _u.Dc12.BtD, _u.Dc12.BtH, _u.Dc12.BtM,
                    dc12dt2str(_u.Dc12.Dt), _u.Dc12.Du,
                    dc12sr2str(_u.Dc12.Sr), dc12ic2str(_u.Dc12.Ic),
-                   _u.Dc12.LatNs ? 'S' : 'N', _u.Dc12.LatD, _u.Dc12.LatM, _u.Dc12.LatS,
-                   _u.Dc12.LonEw ? 'W' : 'E', _u.Dc12.LonD, _u.Dc12.LonM, _u.Dc12.LonS,
+                   _u.Dc12.LatNs ? "南緯" : "北緯", _u.Dc12.LatD, _u.Dc12.LatM, _u.Dc12.LatS,
+                   _u.Dc12.LonEw ? "西経" : "東経", _u.Dc12.LonD, _u.Dc12.LonM, _u.Dc12.LonS,
                    _u.Dc12.Pr, dc12w2str1(_u.Dc12.W1), dc12w2str2(_u.Dc12.W2));
 }
 
