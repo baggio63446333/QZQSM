@@ -11,7 +11,7 @@
 #ifdef QZQSM_ENABLE_DC1
 
 #define DC1_REPORT \
-  "災危通報(緊急地震速報)\n"
+  "災危通報(緊急地震速報)(%s)\n"
 
 #define DC1_REPORT2 \
   "%s\n"
@@ -611,7 +611,7 @@ int QZQSM::filter_dc1()
 void QZQSM::report_dc1()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC1_REPORT);
+                   DC1_REPORT, it2str(_Header.It));
   int num;
   for (num = 0; num < 3; num++) {
     if (_u.Dc1.Co[num] != 0) {
@@ -676,7 +676,7 @@ void QZQSM::decode_dc1()
 #ifdef QZQSM_ENABLE_DC2
 
 #define DC2_REPORT \
-  "災危通報(震源)\n" \
+  "災危通報(震源)(%s)\n" \
   "%d日%d時%d分ころ、地震がありました。\n"
 
 #define DC2_REPORT2 \
@@ -699,7 +699,7 @@ int QZQSM::filter_dc2()
 void QZQSM::report_dc2()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC2_REPORT, _u.Dc2.OtD, _u.Dc2.OtH, _u.Dc2.OtM);
+                   DC2_REPORT, it2str(_Header.It), _u.Dc2.OtD, _u.Dc2.OtH, _u.Dc2.OtM);
   int num;
   for (num = 0; num < 3; num++) {
     if (_u.Dc2.Co[num] != 0) {
@@ -748,7 +748,7 @@ void QZQSM::decode_dc2()
 #ifdef QZQSM_ENABLE_DC3
 
 #define DC3_REPORT \
-  "災危通報(震度)\n" \
+  "災危通報(震度)(%s)\n" \
   "%d日%d時%d分ころ、地震による強い揺れを感じました。\n" \
   "\n" \
   "発表時刻：%d月%d日%d時%d分\n\n"
@@ -835,7 +835,7 @@ int QZQSM::filter_dc3()
 void QZQSM::report_dc3()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC3_REPORT, _u.Dc3.OtD, _u.Dc3.OtH, _u.Dc3.OtM,
+                   DC3_REPORT, it2str(_Header.It), _u.Dc3.OtD, _u.Dc3.OtH, _u.Dc3.OtM,
                    _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
   int num;
   for (num = 0; num < 16; num++) {
@@ -867,7 +867,7 @@ void QZQSM::decode_dc3()
 #ifdef QZQSM_ENABLE_DC4
 
 #define DC4_REPORT \
-  "災危通報(南海トラフ地震)(%d/%d)\n\n" \
+  "災危通報(南海トラフ地震)(%s)(%d/%d)\n\n" \
   "発表時刻：%d月%d日%d時%d分\n\n"
 
 #define DC4_REPORT2 \
@@ -882,7 +882,7 @@ int QZQSM::filter_dc4()
 void QZQSM::report_dc4()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC4_REPORT, _u.Dc4.Pn, _u.Dc4.Pm, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
+                   DC4_REPORT, it2str(_Header.It), _u.Dc4.Pn, _u.Dc4.Pm, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
   int num;
   for (num = 0; num < 18; num++) {
     if (_u.Dc4.Te[num] == 0) {
@@ -911,7 +911,7 @@ void QZQSM::decode_dc4()
 #ifdef QZQSM_ENABLE_DC5
 
 #define DC5_REPORT \
-  "災危通報(津波)\n" \
+  "災危通報(津波)(%s)\n" \
   "%sを発表しました。\n"
 
 #define DC5_REPORT2 \
@@ -1095,7 +1095,7 @@ int QZQSM::filter_dc5()
 void QZQSM::report_dc5()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC5_REPORT, dc5dw2str(_u.Dc5.Dw));
+                   DC5_REPORT, it2str(_Header.It), dc5dw2str(_u.Dc5.Dw));
   int num;
   for (num = 0; num < 3; num++) {
     if (_u.Dc5.Co[num] != 0) {
@@ -1139,7 +1139,7 @@ void QZQSM::decode_dc5()
 #ifdef QZQSM_ENABLE_DC6
 
 #define DC6_REPORT \
-  "災危通報(北西太平洋津波)\n" \
+  "災危通報(北西太平洋津波)(%s)\n" \
   "%s\n\n" \
   "発表時刻：%d月%d日%d時%d分\n\n"
 
@@ -1279,7 +1279,8 @@ int QZQSM::filter_dc6()
 void QZQSM::report_dc6()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC6_REPORT, dc6tp2str(_u.Dc6.Tp), _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
+                   DC6_REPORT, it2str(_Header.It), dc6tp2str(_u.Dc6.Tp),
+                   _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
   int num;
   for (num = 0; num < 5; num++) {
     if (_u.Dc6.site[num].Pl != 0) {
@@ -1312,7 +1313,7 @@ void QZQSM::decode_dc6()
 #ifdef QZQSM_ENABLE_DC8
 
 #define DC8_REPORT \
-  "災危通報(火山)\n\n" \
+  "災危通報(火山)(%s)\n\n" \
   "発表時刻：%d月%d日%d時%d分\n\n" \
   "火山名：%s\n" \
   "日時：%s\n" \
@@ -3386,7 +3387,7 @@ int QZQSM::filter_dc8()
 void QZQSM::report_dc8()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC8_REPORT, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi,
+                   DC8_REPORT, it2str(_Header.It), _jstAtMo, _jstAtD, _jstAtH, _jstAtMi,
                    dc8vo2str(_u.Dc8.Vo), dc8td2str(_u.Dc8.TdD, _u.Dc8.TdH, _u.Dc8.TdM),
                    dc8dw2str(_u.Dc8.Dw));
   int num;
@@ -3420,7 +3421,7 @@ void QZQSM::decode_dc8()
 // JMA-DC Report (Ash Fall)
 
 #define DC9_REPORT \
-  "災危通報(降灰)\n\n" \
+  "災危通報(降灰)(%s)\n\n" \
   "発表時刻：%d月%d日%d時%d分\n\n" \
   "%s\n" \
   "火山名：%s\n" \
@@ -3456,7 +3457,7 @@ int QZQSM::filter_dc9()
 void QZQSM::report_dc9()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC9_REPORT, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi,
+                   DC9_REPORT, it2str(_Header.It), _jstAtMo, _jstAtD, _jstAtH, _jstAtMi,
                    (_u.Dc9.Dw1 == 1) ? "降灰予報(速報)" : "降灰予報(詳細)",
                    dc8vo2str(_u.Dc9.Vo), _u.Dc9.TdD, _u.Dc9.TdH, _u.Dc9.TdM);
   int num;
@@ -3655,7 +3656,7 @@ void QZQSM::decode_dc10()
 // JMA-DC Report (Flood)
 
 #define DC11_REPORT \
-  "災危通報(洪水)\n\n" \
+  "災危通報(洪水)(%s)\n\n" \
   "発表時刻：%d月%d日%d時%d分\n\n"
 
 #define DC11_REPORT2 \
@@ -4132,7 +4133,7 @@ int QZQSM::filter_dc11()
 void QZQSM::report_dc11()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC11_REPORT, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
+                   DC11_REPORT, it2str(_Header.It), _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
   int num;
   for (num = 0; num < 3; num++) {
     if (_u.Dc11.site[num].Lv == 0) break;
@@ -4159,7 +4160,7 @@ void QZQSM::decode_dc11()
 // JMA-DC Report (Typhoon)
 
 #define DC12_REPORT \
-  "災危通報(台風)\n\n" \
+  "災危通報(台風)(%s)\n\n" \
   "発表時刻：%d月%d日%d時%d分\n\n"
 
 #define DC12_REPORT2 \
@@ -4246,7 +4247,7 @@ int QZQSM::filter_dc12()
 void QZQSM::report_dc12()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC12_REPORT, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
+                   DC12_REPORT, it2str(_Header.It), _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
                    DC12_REPORT2, _u.Dc12.Tn, _u.Dc12.BtD, _u.Dc12.BtH, _u.Dc12.BtM,
                    dc12dt2str(_u.Dc12.Dt), _u.Dc12.Du,
@@ -4287,7 +4288,7 @@ void QZQSM::decode_dc12()
 // JMA-DC Report (Marine)
 
 #define DC14_REPORT \
-  "災危通報(海上)\n\n" \
+  "災危通報(海上)(%s)\n\n" \
   "発表時刻：%d月%d日%d時%d分\n\n"
 
 #define DC14_REPORT2 \
@@ -4382,7 +4383,7 @@ int QZQSM::filter_dc14()
 void QZQSM::report_dc14()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC14_REPORT, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
+                   DC14_REPORT, it2str(_Header.It), _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
   int num;
   for (num = 0; num < 8; num++) {
     if (_u.Dc14.site[num].Pl != 0) {
@@ -4401,6 +4402,17 @@ void QZQSM::decode_dc14()
   }
 }
 #endif // QZQSM_ENABLE_DC14
+
+// Information Type
+const char* QZQSM::it2str(int code)
+{
+  switch (code) {
+  case 0: return "発表";
+  case 1: return "訂正";
+  case 2: return "取消";
+  default: return "";
+  }
+}
 
 int QZQSM::get_val(int startbit, int bitwidth)
 {

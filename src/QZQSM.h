@@ -239,6 +239,7 @@ private:
   void report_dc11();
   void report_dc12();
   void report_dc14();
+  const char* it2str(int code);
   const char* dc1co2str(int code);
   const char* dc1de2str(int de);
   const char* dc1ma2str(int ma);
