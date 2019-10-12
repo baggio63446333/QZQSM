@@ -4148,8 +4148,8 @@ void QZQSM::decode_dc11()
   int num;
   for (num = 0; num < 3; num++) {
     _u.Dc11.site[num].Lv = get_val(53 + (44 * num), 4);
-    tmp = (uint64_t)get_val(57 + (44 * num), 32);
-    _u.Dc11.site[num].Pl = (tmp << 8) | get_val(89 + (44 * num), 8);
+    tmp = (uint64_t)get_val(57 + (44 * num), 20);
+    _u.Dc11.site[num].Pl = (tmp << 20) | get_val(77 + (44 * num), 20);
   }
 }
 #endif // QZQSM_ENABLE_DC11
