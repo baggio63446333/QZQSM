@@ -15,6 +15,8 @@ void setup()
   /* Initialize Serial */
   Serial.begin(115200);
 
+  Serial.println("DcReportMonitor Example");
+
   /* Initialize GNSS */
   if (Gnss.begin()) {
     Serial.println("begin error!");
@@ -38,6 +40,7 @@ void loop()
 {
   /* Check update. */
   if (Gnss.waitUpdate(1000)) {
+    RtcTime now;
 
     // LED Heartbeat
     static int toggle = 0;
@@ -65,7 +68,7 @@ void loop()
       gps += 9 * 60 * 60;
 
       // Compare with the current time
-      RtcTime now = RTC.getTime();
+      now = RTC.getTime();
       int diff = now - gps;
       if (abs(diff) >= 1) {
         RTC.setTime(gps);
@@ -81,7 +84,7 @@ void loop()
 
       QZQSM report;
 
-      RtcTime now = RTC.getTime();
+      now = RTC.getTime();
       report.SetYear(now.year());
 
       report.Decode(((struct cxd56_gnss_dcreport_data_s*)handle)->sf);
@@ -97,10 +100,13 @@ void loop()
 
       if (!reported) {
         /* New report */
-        printf("================================ %04d/%02d/%02d %02d:%02d:%02d\n",
-               now.year(), now.month(), now.day(),
-               now.hour(), now.minute(), now.second());
-        printf("%s\n", report.GetReport());
+        char datetime[64];
+        snprintf(datetime, sizeof(datetime),
+                 "================================ %04d/%02d/%02d %02d:%02d:%02d",
+                 now.year(), now.month(), now.day(),
+                 now.hour(), now.minute(), now.second());
+        Serial.println(datetime);
+        Serial.println(report.GetReport());
         s_history[s_index] = report;
         s_index++;
         s_index %= HISTORY_COUNT;
@@ -111,4 +117,3 @@ void loop()
     }
   }
 }
-

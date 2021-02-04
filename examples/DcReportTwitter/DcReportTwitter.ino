@@ -54,6 +54,7 @@ int gnss_task(int argc, char *argv[])
     {
       /* Check update. */
       if (Gnss.waitUpdate(1000)) {
+        RtcTime now;
 
         // LED Heartbeat
         static int toggle = 0;
@@ -81,7 +82,7 @@ int gnss_task(int argc, char *argv[])
           gps += 9 * 60 * 60;
 
           // Compare with the current time
-          RtcTime now = RTC.getTime();
+          now = RTC.getTime();
           int diff = now - gps;
           if (abs(diff) >= 1) {
             RTC.setTime(gps);
@@ -97,7 +98,7 @@ int gnss_task(int argc, char *argv[])
 
           QZQSM report;
 
-          RtcTime now = RTC.getTime();
+          now = RTC.getTime();
           report.SetYear(now.year());
 
           report.Decode(((struct cxd56_gnss_dcreport_data_s*)handle)->sf);
@@ -113,11 +114,13 @@ int gnss_task(int argc, char *argv[])
 
           if (!reported) {
             /* New report */
-            printf("================================ %04d/%02d/%02d %02d:%02d:%02d\n",
-                   now.year(), now.month(), now.day(),
-                   now.hour(), now.minute(), now.second());
-
-            printf("%s\n", report.GetReport());
+            char datetime[64];
+            snprintf(datetime, sizeof(datetime),
+                     "================================ %04d/%02d/%02d %02d:%02d:%02d",
+                     now.year(), now.month(), now.day(),
+                     now.hour(), now.minute(), now.second());
+            Serial.println(datetime);
+            Serial.println(report.GetReport());
 
             // Send tweet message to another task
             memset(g_msg, 0, sizeof(g_msg));
@@ -142,6 +145,8 @@ void setup()
   /* Initialize Serial */
   Serial.begin(115200);
 
+  Serial.println("DcReportTwitter Example");
+
   twitter.begin(LTE_APN, LTE_USER_NAME, LTE_PASSWORD);
 
   struct mq_attr mq_attr;
@@ -162,7 +167,6 @@ void loop()
   for (;;)
     {
       mq_receive(gnss_mqd, (char*)&msg, sizeof(msg), NULL);
-      printf("recv\n");
       if (twitter.post(msg.pmsg)) {
         ;
       }
@@ -171,4 +175,3 @@ void loop()
       }
     }
 }
-
