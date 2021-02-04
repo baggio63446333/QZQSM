@@ -3884,6 +3884,7 @@ const char* QZQSM::dc11pl2str(uint64_t code)
   case 830304000300: return "芝川・新芝川(埼玉県・東京都)";
   case 830304001200: return "新河岸川(埼玉県)";
   case 830304004400: return "神田川(東京都)";
+  case 830304004700: return "妙正寺川(東京都)";
   case 830304006400: return "入間川流域(埼玉県)";
   case 830305000100: return "多摩川(東京都・神奈川県)";
   case 830305000500: return "野川・仙川(東京都)";
@@ -4011,6 +4012,7 @@ const char* QZQSM::dc11pl2str(uint64_t code)
   case 870711000100: return "高梁川(岡山県)";
   case 870711000500: return "小田川(岡山県)";
   case 870712000100: return "旭川(岡山県)";
+  case 870712000103: return "旭川水系旭川中流部(岡山県)";
   case 870712000400: return "百間川(岡山県)";
   case 870713000100: return "吉井川(岡山県)";
   case 870713002800: return "金剛川(岡山県)";
