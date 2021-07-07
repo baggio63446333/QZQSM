@@ -1355,13 +1355,21 @@ void QZQSM::decode_dc6()
   "%s\n"
 
 // Activity Time
-const char* QZQSM::dc8td2str(int d, int h, int m)
+const char* QZQSM::dc8td2str(int d, int h, int m, int ambiguity)
 {
-  if ((h == 31) && (m == 63)) {
+  if (ambiguity <= 3) {
+    snprintf(_undefMessage, sizeof(_undefMessage),
+             "%d日%d時%d分", d, h, m);
+  } else if (ambiguity == 4) {
+    snprintf(_undefMessage, sizeof(_undefMessage),
+             "%d日%d時", d, h);
+  } else if (ambiguity == 5) {
+    snprintf(_undefMessage, sizeof(_undefMessage),
+             "%d日", d);
+  } else {
     return "不明";
   }
-  snprintf(_undefMessage, sizeof(_undefMessage),
-           "%d日%d時%d分", d, h, m);
+
   return _undefMessage;
 }
 
@@ -1537,6 +1545,7 @@ const char* QZQSM::dc8vo2str(int code)
   case 550: return "霧島山(御鉢)";
   case 551: return "霧島山(新燃岳)";
   case 552: return "霧島山(えびの高原(硫黄山)周辺)";
+  case 553: return "霧島山(大幡池)";
   case 601: return "硫黄鳥島";
   case 602: return "西表島北北東海底火山";
   case 900: return "全国の活火山";
@@ -3420,7 +3429,7 @@ void QZQSM::report_dc8()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
                    DC8_REPORT, it2str(_Header.It), _jstAtMo, _jstAtD, _jstAtH, _jstAtMi,
-                   dc8vo2str(_u.Dc8.Vo), dc8td2str(_u.Dc8.TdD, _u.Dc8.TdH, _u.Dc8.TdM),
+                   dc8vo2str(_u.Dc8.Vo), dc8td2str(_u.Dc8.TdD, _u.Dc8.TdH, _u.Dc8.TdM, _u.Dc8.Du),
                    dc8dw2str(_u.Dc8.Dw));
   int num;
   for (num = 0; num < 5; num++) {
@@ -3433,6 +3442,7 @@ void QZQSM::report_dc8()
 
 void QZQSM::decode_dc8()
 {
+  _u.Dc8.Du    = get_val(50, 3);
   _u.Dc8.TdD   = get_val(53, 5);
   _u.Dc8.TdH   = get_val(58, 5);
   _u.Dc8.TdM   = get_val(63, 6);

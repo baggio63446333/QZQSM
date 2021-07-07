@@ -168,6 +168,7 @@ private:
     } Dc6;
 
     struct {
+      int Du;
       int TdD;
       int TdH;
       int TdM;
@@ -288,7 +289,7 @@ private:
   const char* dc6ta2str(int h, int m);
   const char* dc6th2str(int code);
   const char* dc6pl2str(int code);
-  const char* dc8td2str(int d, int h, int m);
+  const char* dc8td2str(int d, int h, int m, int ambiguity);
   const char* dc8dw2str(int code);
   const char* dc8vo2str(int code);
   const char* dc8pl2str(int code);
