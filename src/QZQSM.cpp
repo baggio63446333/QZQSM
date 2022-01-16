@@ -4163,7 +4163,7 @@ const char* QZQSM::dc11pl2str(uint64_t code)
     default: pref = "その他"; break;
     }
     snprintf(_undefMessage, sizeof(_undefMessage),
-             "%sの河川(コード番号：%d)", pref, code);
+             "%sの河川(コード番号：%lld)", pref, code);
     return _undefMessage;
   }
 }
