@@ -1159,7 +1159,9 @@ void QZQSM::decode_dc5()
     _u.Dc5.site[num].TaM = get_val(90 + (26 * num), 6);
     _u.Dc5.site[num].Th  = get_val(96 + (26 * num), 4);
     _u.Dc5.site[num].Pl  = get_val(100 + (26 * num), 10);
-    utc2jst(_Header.AtMo, _Header.AtD, _u.Dc5.site[num].TaH, _u.Dc5.site[num].TaM);
+    if ((_u.Dc5.site[num].TaH != 31) && (_u.Dc5.site[num].TaM != 63)) {
+      utc2jst(_Header.AtMo, _Header.AtD, _u.Dc5.site[num].TaH, _u.Dc5.site[num].TaM);
+    }
   }
 }
 #endif // QZQSM_ENABLE_DC5
@@ -1333,7 +1335,9 @@ void QZQSM::decode_dc6()
     _u.Dc6.site[num].TaM = get_val(62 + (28 * num), 6);
     _u.Dc6.site[num].Th  = get_val(68 + (28 * num), 9);
     _u.Dc6.site[num].Pl  = get_val(77 + (28 * num), 7);
-    utc2jst(_Header.AtMo, _Header.AtD, _u.Dc6.site[num].TaH, _u.Dc6.site[num].TaM);
+    if ((_u.Dc6.site[num].TaH != 31) && (_u.Dc6.site[num].TaM != 63)) {
+      utc2jst(_Header.AtMo, _Header.AtD, _u.Dc6.site[num].TaH, _u.Dc6.site[num].TaM);
+    }
   }
 }
 #endif // QZQSM_ENABLE_DC6
