@@ -85,16 +85,16 @@ const char* QZQSM::dc1co2str(int code)
   case 115: return "沖合での観測値であり、沿岸では津波はさらに高くなます。";
   case 121: return "＜大津波警報＞\n"
                    "　大きな津波が襲い甚大な被害が発生します。\n"
-                   "　沿岸部や川沿いにる人はただちに高台や避難ビルなど安全な場所へ避難してください。\n"
+                   "　沿岸部や川沿いにいる人はただちに高台や避難ビルなど安全な場所へ避難してください。\n"
                    "　津波は繰り返し襲ってきます。警報が解除されるまで安全な場所から離れないでください。";
   case 122: return "＜津波警報＞\n"
                    "　津波による被害が発生します。\n"
-                   "　沿岸部や川沿いにる人はただちに高台や避難ビルなど安全な場所へ避難してください。\n"
+                   "　沿岸部や川沿いにいる人はただちに高台や避難ビルなど安全な場所へ避難してください。\n"
                    "　津波は繰り返し襲ってきます。警報が解除されるまで安全な場所から離れないでください。";
   case 123: return "＜津波注意報＞\n"
                    "　海の中や海岸付近は危険です。\n"
                    "　海の中にいる人はただちに海から上がって、海岸から離れてください。\n"
-                   "　潮の流れが速い状態が続きますで、注意報が解除さるるまで海に入ったり海岸に近づいたりしないようにしてください。";
+                   "　潮の流れが速い状態が続きますので、注意報が解除されるまで海に入ったり海岸に近づいたりしないようにしてください。";
   case 124: return "＜津波予報(若干の海面変動)＞\n"
                    "　若干の海面変動が予想されますが、被害の心配はありせん。";
   case 131: return "警報が発表された沿岸部や川沿いにいる人はただちに高台や避難ビルなど安全な場所へ避難してください。\n"
@@ -109,12 +109,12 @@ const char* QZQSM::dc1co2str(int code)
   case 146: return "沖合で高い津波を観測したため津波警報に切り替えました。";
   case 147: return "沖合で高い津波を観測したため津波警報を切り替えました。";
   case 148: return "沖合で高い津波を観測したため予想される津波の高さを切り替えました。";
-  case 149: return "ただちに避難してくさい。";
+  case 149: return "ただちに避難してください。";
   case 201: return "強い揺れに警戒してください。";
   case 211: return "津波警報等(大津波警報・津波警報あるいは津波注意報)を発表中です。";
   case 212: return "この地震により、日本の沿岸では若干の海面変動があるかもしれませんが、被害の心配はありません。";
   case 213: return "今後もしばらく海面変動が続と思われますので、海水浴や磯釣り等を行う際は注意してください。";
-  case 214: return "今後もしばらく海面変動が続くと思われますので、磯釣り等を行う際は注意してください";
+  case 214: return "今後もしばらく海面変動が続くと思われますので、磯釣り等を行う際は注意してください。";
   case 215: return "この地震による津波の心配はありません。";
   case 216: return "震源が海底の場合、津波が発生するおそれがあります。";
   case 217: return "今後の情報に注意してください。";
@@ -1159,7 +1159,9 @@ void QZQSM::decode_dc5()
     _u.Dc5.site[num].TaM = get_val(90 + (26 * num), 6);
     _u.Dc5.site[num].Th  = get_val(96 + (26 * num), 4);
     _u.Dc5.site[num].Pl  = get_val(100 + (26 * num), 10);
-    utc2jst(_Header.AtMo, _Header.AtD, _u.Dc5.site[num].TaH, _u.Dc5.site[num].TaM);
+    if ((_u.Dc5.site[num].TaH != 31) && (_u.Dc5.site[num].TaM != 63)) {
+      utc2jst(_Header.AtMo, _Header.AtD, _u.Dc5.site[num].TaH, _u.Dc5.site[num].TaM);
+    }
   }
 }
 #endif // QZQSM_ENABLE_DC5
@@ -1333,7 +1335,9 @@ void QZQSM::decode_dc6()
     _u.Dc6.site[num].TaM = get_val(62 + (28 * num), 6);
     _u.Dc6.site[num].Th  = get_val(68 + (28 * num), 9);
     _u.Dc6.site[num].Pl  = get_val(77 + (28 * num), 7);
-    utc2jst(_Header.AtMo, _Header.AtD, _u.Dc6.site[num].TaH, _u.Dc6.site[num].TaM);
+    if ((_u.Dc6.site[num].TaH != 31) && (_u.Dc6.site[num].TaM != 63)) {
+      utc2jst(_Header.AtMo, _Header.AtD, _u.Dc6.site[num].TaH, _u.Dc6.site[num].TaM);
+    }
   }
 }
 #endif // QZQSM_ENABLE_DC6
@@ -4163,7 +4167,7 @@ const char* QZQSM::dc11pl2str(uint64_t code)
     default: pref = "その他"; break;
     }
     snprintf(_undefMessage, sizeof(_undefMessage),
-             "%sの河川(コード番号：%d)", pref, code);
+             "%sの河川(コード番号：%lld)", pref, code);
     return _undefMessage;
   }
 }
