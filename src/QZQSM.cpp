@@ -148,7 +148,7 @@ const char* QZQSM::dc1co2str(int code)
 // Depth of Seismic Epicenter
 const char* QZQSM::dc1de2str(int de)
 {
-  static char destr[8];
+  static char destr[13]; // %dが1～12バイト出力するので13にする
   if (511 == de) {
     return "不明";
   } else if (501 <= de) {
@@ -162,7 +162,7 @@ const char* QZQSM::dc1de2str(int de)
 // Magnitude
 const char* QZQSM::dc1ma2str(int ma)
 {
-  static char mastr[8];
+  static char mastr[15]; // %d.%dが4～14バイト出力するので15にする
   if (127 == ma) {
     return "不明";
   } else if (101 <= ma) {
@@ -4481,7 +4481,7 @@ int QZQSM::get_val(int startbit, int bitwidth)
 
 void QZQSM::utc2jst(int& month, int& day, int& hour, int& minute)
 {
-  uint32_t sec;
+  time_t sec;
   struct tm tm;
 
   tm.tm_sec  = 0;
