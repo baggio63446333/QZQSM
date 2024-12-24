@@ -4621,6 +4621,11 @@ void QZQSM::Decode(const uint8_t *data)
   _jstAtMi = _Header.AtMi;
   utc2jst(_jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
 
+  if (_Header.MT != 43) {
+    // only decode MT43
+    return;
+  }
+
   if (0 == (_category & (1 << _Header.Dc))) {
     return;
   }
