@@ -56,7 +56,9 @@
   "深さ(km)：%s\n" \
   "マグニチュード：%s\n" \
   "震度(下限)：%s\n" \
-  "震度(上限)：%s\n"
+  "震度(上限)：%s\n" \
+  "長周期地震動階級(下限)：%s\n" \
+  "長周期地震動階級(上限)：%s\n"
 
 #define DC1_REPORT4 \
   "%s\n"
@@ -552,6 +554,21 @@ const char* QZQSM::dc1si2str(int code)
   }
 }
 
+// Maximum expected Long-period earthquake ground motion
+const char* QZQSM::dc1lg2str(int code)
+{
+  switch (code) {
+  case  1: return "長周期地震動階級1未満";
+  case  2: return "長周期地震動階級1";
+  case  3: return "長周期地震動階級2";
+  case  4: return "長周期地震動階級3";
+  case  5: return "長周期地震動階級4";
+  case  6: return "～程度以上";
+  case  7: return "不明";
+  default: return "";
+  }
+}
+
 // Forecast Region Earthquake Early Warning (Region)
 const char* QZQSM::dc1pl2str(int code)
 {
@@ -657,7 +674,8 @@ void QZQSM::report_dc1()
                    _u.Dc1.OtD, _u.Dc1.OtH, _u.Dc1.OtM,
                    dc1de2str(_u.Dc1.De),
                    dc1ma2str(_u.Dc1.Ma),
-                   dc1si2str(_u.Dc1.Ll), dc1si2str(_u.Dc1.Ul));
+                   dc1si2str(_u.Dc1.Ll), dc1si2str(_u.Dc1.Ul),
+                   dc1lg2str(_u.Dc1.LgL), dc1lg2str(_u.Dc1.LgU));
   int b;
   for (b = 0; b < 32; b++) {
     if (_u.Dc1.Pl[0] & (1 << (31 - b))) {
@@ -682,6 +700,8 @@ void QZQSM::report_dc1()
 void QZQSM::decode_dc1()
 {
   int num;
+  _u.Dc1.LgL = get_val(47, 3);
+  _u.Dc1.LgU = get_val(50, 3);
   for (num = 0; num < 3; num++) {
     _u.Dc1.Co[num] = get_val(53 + (9 * num), 9);
   }
@@ -900,10 +920,26 @@ void QZQSM::decode_dc3()
 
 #define DC4_REPORT \
   "災危通報(南海トラフ地震)(%s)(%d/%d)\n\n" \
-  "発表時刻：%d月%d日%d時%d分\n\n"
+  "発表時刻：%d月%d日%d時%d分\n\n" \
+  "地震関連情報：%s\n"
 
 #define DC4_REPORT2 \
   "%s\n"
+
+// Information Serial Code
+const char* QZQSM::dc4is2str(int code)
+{
+  switch (code) {
+  case  1: return "調査中A";
+  case  2: return "調査中B";
+  case  3: return "調査中C";
+  case  4: return "巨大地震警戒";
+  case  5: return "巨大地震注意";
+  case  6: return "調査終了";
+  case  15: return "その他";
+  default: return "";
+  }
+}
 
 int QZQSM::filter_dc4()
 {
@@ -914,7 +950,9 @@ int QZQSM::filter_dc4()
 void QZQSM::report_dc4()
 {
   _len += snprintf(&_message[_len], sizeof(_message) - _len,
-                   DC4_REPORT, it2str(_Header.It), _u.Dc4.Pn, _u.Dc4.Pm, _jstAtMo, _jstAtD, _jstAtH, _jstAtMi);
+                   DC4_REPORT, it2str(_Header.It), _u.Dc4.Pn, _u.Dc4.Pm,
+                   _jstAtMo, _jstAtD, _jstAtH, _jstAtMi,
+                   dc4is2str(_u.Dc4.Is));
   int num;
   for (num = 0; num < 18; num++) {
     if (_u.Dc4.Te[num] == 0) {
@@ -1018,7 +1056,7 @@ const char* QZQSM::dc5pl2str(int code)
   case 120: return "オホーツク海沿岸";
   case 191: return "北海道太平洋沿岸";
   case 192: return "北海道日本海沿岸";
-  case 193: return "オホーツク海沿岸";
+  case 193: return "Reserved";
   case 200: return "青森県日本海沿岸";
   case 201: return "青森県太平洋沿岸";
   case 202: return "陸奥湾";
@@ -1109,7 +1147,7 @@ const char* QZQSM::dc5pl2str(int code)
   case 801: return "大東島地方";
   case 802: return "宮古島・八重山地方";
   case 891: return "沖縄県地方";
-  case 990: return "GPS波浪計";
+  case 990: return "Reserved";
   case 1000: return "その他津波予報区";
   default:
     snprintf(_undefMessage, sizeof(_undefMessage),
@@ -1353,7 +1391,7 @@ void QZQSM::decode_dc6()
   "発表時刻：%d月%d日%d時%d分\n\n" \
   "火山名：%s\n" \
   "日時：%s\n" \
-  "現象：%s\n" \
+  "現象：%s\n"
 
 #define DC8_REPORT2 \
   "%s\n"
@@ -1381,48 +1419,48 @@ const char* QZQSM::dc8td2str(int d, int h, int m, int ambiguity)
 const char* QZQSM::dc8dw2str(int code)
 {
   switch (code) {
-  case 1: return "噴火警報";
-  case 2: return "火口周辺警報";
-  case 3: return "噴火警報(周辺海域)";
-  case 4: return "噴火予報：警報解除";
-  case 5: return "噴火予報";
+  case 1: return "Reserved";
+  case 2: return "Reserved";
+  case 3: return "Reserved";
+  case 4: return "Reserved";
+  case 5: return "Reserved";
   case 11: return "レベル 1(活火山であることに留意)";
   case 12: return "レベル 2(火口周辺規制)";
   case 13: return "レベル 3(入山規制)";
-  case 14: return "レベル 4(避難準備)";
+  case 14: return "レベル 4(高齢者等避難)";
   case 15: return "レベル 5(避難)";
   case 21: return "活火山であることに留意";
   case 22: return "火口周辺危険";
   case 23: return "入山危険";
   case 24: return "山麓厳重警戒";
   case 25: return "居住地域厳重警戒";
-  case 31: return "海上警報(噴火警報)";
-  case 32: return "海上警報(噴火警報解除)";
-  case 33: return "海上予報(噴火予報)";
+  case 31: return "Reserved";
+  case 32: return "Reserved";
+  case 33: return "Reserved";
   case 35: return "活火山であることに留意(海底火山)";
   case 36: return "周辺海域警戒";
-  case 41: return "噴火警報：避難等";
-  case 42: return "噴火警報：入山規制等";
-  case 43: return "火口周辺警報：入山規制等";
-  case 44: return "噴火警報(周辺海域)：周辺海域警戒";
-  case 45: return "活火山であることに留意";
-  case 46: return "噴火警報：当該居住地域厳重警戒";
-  case 47: return "噴火警報：当該山麓厳重警戒";
-  case 48: return "噴火警報：火口周辺警戒";
-  case 49: return "火口周辺警報：火口周辺警戒";
-  case 51: return "爆発";
+  case 41: return "Reserved";
+  case 42: return "Reserved";
+  case 43: return "Reserved";
+  case 44: return "Reserved";
+  case 45: return "Reserved";
+  case 46: return "Reserved";
+  case 47: return "Reserved";
+  case 48: return "Reserved";
+  case 49: return "Reserved";
+  case 51: return "Reserved";
   case 52: return "噴火";
-  case 53: return "噴火開始";
-  case 54: return "連続噴火継続";
-  case 55: return "連続噴火停止";
-  case 56: return "噴火多発";
-  case 61: return "爆発したもよう";
+  case 53: return "Reserved";
+  case 54: return "Reserved";
+  case 55: return "Reserved";
+  case 56: return "Reserved";
+  case 61: return "Reserved";
   case 62: return "噴火したもよう";
-  case 63: return "噴火開始したもよう";
-  case 64: return "連続噴火が継続しているもよう";
-  case 65: return "連続噴火は停止したもよう";
-  case 91: return "不明";
-  case 99: return "その他の現象";
+  case 63: return "Reserved";
+  case 64: return "Reserved";
+  case 65: return "Reserved";
+  case 91: return "Reserved";
+  case 99: return "Reserved";
   case 127: return "その他の防災気象情報要素";
   default:
     snprintf(_undefMessage, sizeof(_undefMessage),
@@ -3904,6 +3942,8 @@ const char* QZQSM::dc11pl2str(uint64_t code)
   case 830303000101: return "利根川上流部(群馬県・茨城県・千葉県・埼玉県)";
   case 830303000102: return "利根川下流部(茨城県・千葉県)";
   case 830303000103: return "利根川中流部(茨城県・千葉県)";
+  case 840403000104: return "信濃川水系千曲川下流(長野県)";
+  case 840403000105: return "信濃川上流(新潟県)";
   case 830303002800: return "霞ヶ浦・北浦(茨城県・千葉県)";
   case 830303004600: return "桜川(茨城県)";
   case 830303015200: return "小貝川(栃木県・茨城県)";
@@ -3929,9 +3969,11 @@ const char* QZQSM::dc11pl2str(uint64_t code)
   case 830304000100: return "荒川(埼玉県・東京都)";
   case 830304000300: return "芝川・新芝川(埼玉県・東京都)";
   case 830304001200: return "新河岸川(埼玉県)";
+  case 830304003200: return "石神井川(東京都)";
   case 830304004400: return "神田川(東京都)";
   case 830304004700: return "妙正寺川(東京都)";
-  case 830304006400: return "入間川流域(埼玉県)";
+  case 830304007000: return "越辺川・都幾川・高麗川(埼玉県)";
+  case 830304007100: return "入間川・小畔川(埼玉県)";
   case 830305000100: return "多摩川(東京都・神奈川県)";
   case 830305000500: return "野川・仙川(東京都)";
   case 830305002000: return "浅川(東京都)";

@@ -98,6 +98,8 @@ private:
 
   union {
     struct {
+      int LgL;
+      int LgU;
       int Co[3];
       int OtD;
       int OtH;
@@ -142,6 +144,7 @@ private:
       char Te[18];
       int Pn;
       int Pm;
+      int Is;
     } Dc4;
 
     struct {
@@ -278,9 +281,11 @@ private:
   const char* dc1ma2str(int ma);
   const char* dc1ep2str(int code);
   const char* dc1si2str(int code);
+  const char* dc1lg2str(int code);
   const char* dc1pl2str(int code);
   const char* dc3es2str(int code);
   const char* dc3pl2str(int code);
+  const char* dc4is2str(int code);
   const char* dc5dw2str(int code);
   const char* dc5ta2str(int h, int m);
   const char* dc5th2str(int code);
