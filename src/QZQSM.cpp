@@ -4408,7 +4408,7 @@ const char* QZQSM::dc14dw2str(int code)
 const char* QZQSM::dc14pl2str(int code)
 {
   switch (code) {
-  case 1000: return "日本海北部及びオホーツク南日本海北部";
+  case 1000: return "日本海北部及びオホーツク海南部";
   case 1010: return "サハリン東方海上";
   case 1020: return "サハリン西方海上";
   case 1030: return "網走沖";
